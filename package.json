@@ -34,7 +34,15 @@
     "cordova-plugin-whitelist",
     "cordova-plugin-splashscreen",
     "cordova-plugin-statusbar",
-    "ionic-plugin-keyboard"
+    "ionic-plugin-keyboard",
+    {
+      "id": "cordova-plugin-facebook4",
+      "locator": "cordova-plugin-facebook4",
+      "variables": {
+        "APP_ID": "1513920088906320",
+        "APP_NAME": "testfbplugin"
+      }
+    }
   ],
   "cordovaPlatforms": [
     "ios",

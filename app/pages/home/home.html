@@ -4,9 +4,25 @@
   </ion-title>
 </ion-navbar>
 
-<ion-content class="home" padding>
-  The world is your oyster.
-  <p>
-    If you get lost, the <a href="http://ionicframework.com/docs/v2">docs</a> will be your guide.
-  </p>
-</ion-content>
+<ion-content padding>
+  <h1>User Login</h1>
+  <form #loginCreds="ngForm">
+    <ion-item>
+      <ion-label>Username</ion-label>
+      <ion-input type="text" ngControl="email"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label>Password</ion-label>
+      <ion-input type="password" ngControl="password"></ion-input>
+    </ion-item>
+
+    <div padding>
+      <button block (click)="doEmailLogin(loginCreds.value)">Login</button>
+      <button block (click)="doFacebookLogin()">Login Facebook</button>
+      <button block (click)="doRegisterUser(loginCreds.value)">Create Account</button>
+    </div>
+
+    <div padding>
+      <p *ngIf="error" class="error">Error:&nbsp;{{ error.code }}</p>
+    </div>
+  </form>

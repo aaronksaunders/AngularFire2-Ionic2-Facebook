@@ -2,7 +2,7 @@ import {Component} from '@angular/core';
 import {Platform, ionicBootstrap} from 'ionic-angular';
 import {StatusBar} from 'ionic-native';
 import {HomePage} from './pages/home/home';
-import {Facebook} from 'ionic-native';
+
 
 import {
   FIREBASE_PROVIDERS, defaultFirebase,
@@ -11,18 +11,16 @@ import {
 } from 'angularfire2';
 
 
-declare let firebase: any;
-
 @Component({
   template: '<ion-nav [root]="rootPage"></ion-nav>',
   providers: [
     FIREBASE_PROVIDERS,
-    // Initialize Firebase app  
+    // Initialize Firebase app  - CHANGE THESE
     defaultFirebase({
-      apiKey: "AIzaSyAj670",
-      authDomain: "",
-      databaseURL: "",
-      storageBucket: "",
+      apiKey: "AIzaSyAj670bbFR6dY",
+      authDomain: "authDomain",
+      databaseURL: "https://databaseURL.com",
+      storageBucket: "storageBucket.appspot.com",
     }),
     firebaseAuthConfig({})
   ]
@@ -37,30 +35,6 @@ export class MyApp {
       // Here you can do any higher level native things you might need.
       StatusBar.styleDefault();
 
-
-      Facebook.login(['email'])
-        .then((_response) => {
-          console.log(_response)
-
-          let creds = firebase.auth.FacebookAuthProvider.credential(_response.authResponse.accessToken)
-          let providerConfig = {
-            provider: AuthProviders.Facebook,
-            method: AuthMethods.OAuthToken,
-            remember: 'default',
-            scope: ['email'],
-          };
-          this.af.auth.login(creds, providerConfig)
-            .then((success) => {
-              console.log("Firebase success: " + JSON.stringify(success));
-              alert(JSON.stringify(success))
-            })
-            .catch((error) => {
-              console.log("Firebase failure: " + JSON.stringify(error));
-              alert(JSON.stringify(error))
-            });
-
-        })
-        .catch((_error) => { console.log(_error) })
     });
   }
 }
