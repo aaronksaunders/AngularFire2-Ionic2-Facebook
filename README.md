@@ -11,7 +11,53 @@ https://github.com/aaronksaunders/ionic2firebase3
 Make sure you install the plugin correctly and configure your facebook app
 [http://ionicframework.com/docs/v2/native/facebook/](http://ionicframework.com/docs/v2/native/facebook/)
 
-The magic is properly creating the credentials...
+I believe running `ionic state restore` should get you going!
+
+Be sure you update the app with your credentials from Firebase Console
+
+```Javascript
+// In app.ts
+@Component({
+  template: '<ion-nav [root]="rootPage"></ion-nav>',
+  providers: [
+    FIREBASE_PROVIDERS,
+    // Initialize Firebase app  - CHANGE THESE
+    defaultFirebase({
+      apiKey: "YOUR-API-KEY",
+      authDomain: "YOUR-AUTH-DOMAIN",
+      databaseURL: "https://YOUR-DATABASE-URL.com",
+      storageBucket: "YOUR-STORAGE-BUCKET.com",
+    }),
+    firebaseAuthConfig({})
+  ]
+})
+```
+
+###Basic Email Login
+
+This is pretty straigt forward
+```javascript
+  doEmailLogin(_creds) {
+
+    let providerConfig = {
+      provider: AuthProviders.Password,
+      method: AuthMethods.Password
+    };
+
+    this.af.auth.login(_creds, providerConfig)
+      .then((success) => {
+        console.log("Firebase success: " + JSON.stringify(success));
+        alert(JSON.stringify(success))
+      })
+      .catch((error) => {
+        console.log("Firebase failure: " + JSON.stringify(error));
+        alert(JSON.stringify(error))
+      });
+  }
+```
+
+###Facebook Login
+The magic is properly creating the credentials... for Facebook login.
 
 ```Javascript
 import {Component} from '@angular/core';
