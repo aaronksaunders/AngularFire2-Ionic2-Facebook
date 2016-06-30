@@ -4,7 +4,7 @@ Facebook Login w/AngularFire2 and Ionic2
 See Issue here.... https://github.com/angular/angularfire2/issues/296
 
 -
-**More complete Ionic2 Firebase 3 solution with Authentication and Image Upload**
+**Looking for a More complete Ionic2 Firebase 3 solution with Authentication and Image Upload**
 https://github.com/aaronksaunders/ionic2firebase3
 
 -
