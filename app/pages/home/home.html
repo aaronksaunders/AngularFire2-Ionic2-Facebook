@@ -6,7 +6,7 @@
 
 <ion-content padding>
   <h1>User Login</h1>
-  <form #loginCreds="ngForm">
+  <form #loginCreds="ngForm" *ngIf="!userProfile">
     <ion-item>
       <ion-label>Username</ion-label>
       <ion-input type="text" ngControl="email"></ion-input>
@@ -26,3 +26,11 @@
       <p *ngIf="error" class="error">Error:&nbsp;{{ error.code }}</p>
     </div>
   </form>
+
+  <div padding *ngIf="userProfile">
+    <h3>Name: {{ (userProfile | async)?.displayName }}</h3>
+    <h3>URL: {{ (userProfile | async)?.avatar }}</h3>
+    <p></p>
+    <button (click)="doLogout()">LOGOUT</button>
+  </div>
+</ion-content>

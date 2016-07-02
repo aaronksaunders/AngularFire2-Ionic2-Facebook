@@ -136,3 +136,26 @@ export class MyApp {
 ionicBootstrap(MyApp);
 ```
 
+### Saving User
+
+
+Saves the user to the database, this is where you would potentially store additional 
+information on the user
+
+```Javascript
+
+  _setUpUser(_credentials, _authData) {
+    var ref = firebase.database().ref('APP/users/' + _authData.uid)
+    var data = {
+      "provider": _authData.providerData[0],
+      "avatar": (_credentials.imageUri || "missing"),
+      "displayName": _authData.email,
+    };
+
+    return ref.set(data).then(function () {
+      return data
+    }).catch(function (_error) {
+      return _error
+    })
+  }
+```

@@ -1,4 +1,4 @@
-import {Component} from "@angular/core";
+import {Component, OnInit} from "@angular/core";
 import {Platform, NavController} from 'ionic-angular';
 import {Facebook} from 'ionic-native';
 
@@ -16,13 +16,26 @@ declare let firebase: any;
 export class HomePage {
 
   loginCreds: any = {}
+  userProfile: any
 
   constructor(private navController: NavController, public af: AngularFire, platform: Platform) {
     platform.ready().then(() => {
-
       this.af = af;
-
     });
+  }
+
+  ngOnInit() {
+    this.af.auth.subscribe((data) => {
+      if (data) {
+        this.userProfile = this.af.database.object('APP/users/' + data.uid);
+      } else {
+        this.userProfile = null;
+      }
+    })
+  }
+
+  doLogout() {
+    this.af.auth.logout();
   }
 
   doRegisterUser(_creds) {
@@ -40,6 +53,8 @@ export class HomePage {
       .then((success) => {
         console.log("Firebase success: " + JSON.stringify(success));
         alert(JSON.stringify(success))
+
+        return this._setUpUser(_creds, success.auth);
       })
       .catch((error) => {
         console.log("Firebase failure: " + JSON.stringify(error));
@@ -47,8 +62,23 @@ export class HomePage {
       });
   }
 
-  doFacebookLogin() {
 
+  _setUpUser(_credentials, _authData) {
+    var ref = firebase.database().ref('GLOBALFAN/users/' + _authData.uid)
+    var data = {
+      "provider": _authData.providerData[0],
+      "avatar": (_credentials.imageUri || "missing"),
+      "displayName": _authData.email,
+    };
+
+    return ref.set(data).then(function () {
+      return data
+    }).catch(function (_error) {
+      return _error
+    })
+  }
+
+  doFacebookLogin() {
     Facebook.login(['email'])
       .then((_response) => {
         console.log(_response)
@@ -64,6 +94,8 @@ export class HomePage {
           .then((success) => {
             console.log("Firebase success: " + JSON.stringify(success));
             alert(JSON.stringify(success))
+
+            return this._setUpUser(creds, success.auth)
           })
           .catch((error) => {
             console.log("Firebase failure: " + JSON.stringify(error));
