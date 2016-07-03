@@ -10,6 +10,7 @@ import {
   AuthMethods
 } from 'angularfire2';
 
+//declare let firebase: any;
 
 @Component({
   template: '<ion-nav [root]="rootPage"></ion-nav>',
@@ -34,7 +35,6 @@ export class MyApp {
       // Okay, so the platform is ready and our plugins are available.
       // Here you can do any higher level native things you might need.
       StatusBar.styleDefault();
-
     });
   }
 }

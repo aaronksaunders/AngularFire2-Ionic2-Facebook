@@ -9,13 +9,10 @@
     "**/*.ts",
     "!node_modules/**/*"
   ],
-   "files": [
-    "node_modules/angularfire2/firebase3.d.ts"
-  ],
   "exclude": [
     "node_modules",
-    "typings/main",
-    "typings/main.d.ts"
+    "typings/global",
+    "typings/global.d.ts"
   ],
   "compileOnSave": false,
   "atom": {

@@ -2,13 +2,14 @@ import {Component, OnInit} from "@angular/core";
 import {Platform, NavController} from 'ionic-angular';
 import {Facebook} from 'ionic-native';
 
+
 import {
   FIREBASE_PROVIDERS, defaultFirebase,
   AngularFire, firebaseAuthConfig, AuthProviders,
   AuthMethods
 } from 'angularfire2';
 
-declare let firebase: any;
+//declare let firebase: any;
 
 @Component({
   templateUrl: 'build/pages/home/home.html'
@@ -17,6 +18,7 @@ export class HomePage {
 
   loginCreds: any = {}
   userProfile: any
+  fbProfile  : any
 
   constructor(private navController: NavController, public af: AngularFire, platform: Platform) {
     platform.ready().then(() => {
@@ -78,12 +80,35 @@ export class HomePage {
     })
   }
 
+  _FBUserProfile() {
+
+    return new Promise((resolve, reject) => {
+      Facebook.api('me?fields=id,name,email,first_name,last_name,picture.width(100).height(100).as(picture_small),picture.width(720).height(720).as(picture_large)', [])
+        .then((profileData) => {
+          console.log(JSON.stringify(profileData));
+          return resolve(profileData);
+        }, (err) => {
+          console.log(JSON.stringify(err));
+          return reject(err);
+        });
+    });
+  }
+
   doFacebookLogin() {
+    var _authInfo
+
     Facebook.login(['email'])
       .then((_response) => {
         console.log(_response)
 
-        let creds = firebase.auth.FacebookAuthProvider.credential(_response.authResponse.accessToken)
+        _authInfo = _response
+
+        return this._FBUserProfile();
+
+      }).then((success) => {
+        //let p: any = firebase.auth.FacebookAuthProvider as firebase.auth.FacebookAuthProvider_Instance
+        this.fbProfile = success;
+        let creds = (firebase.auth.FacebookAuthProvider as any).credential(_authInfo.authResponse.accessToken)
         let providerConfig = {
           provider: AuthProviders.Facebook,
           method: AuthMethods.OAuthToken,
