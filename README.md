@@ -13,6 +13,26 @@ Make sure you install the plugin correctly and configure your facebook app
 
 I believe running `ionic state restore` should get you going!
 
+###Update Facebook Information
+
+In `package.json`
+```
+    {
+      "id": "cordova-plugin-facebook4",
+      "locator": "cordova-plugin-facebook4",
+      "variables": {
+        "APP_ID": "YOUR-APP-ID",
+        "APP_NAME": "YOUR-APP-NAME"
+      }
+```      
+And also edit the information in the `config.xml` file
+```
+    <plugin name="cordova-plugin-facebook4" spec="~1.7.1">
+        <variable name="APP_ID" value="YOUR-APP-ID" />
+        <variable name="APP_NAME" value="YOUR-APP-NAME" />
+    </plugin>
+```
+
 Be sure you update the app with your credentials from Firebase Console
 
 ```Javascript
