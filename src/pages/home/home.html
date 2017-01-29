@@ -1,0 +1,45 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title>
+      Ionic Blank
+    </ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content padding>
+  <h1>User Login</h1>
+  <form #loginCreds="ngForm" *ngIf="!userProfile && !fbProfile">
+    <ion-item>
+      <ion-label>Username</ion-label>
+      <ion-input type="text" [(ngModel)]="loginCreds.email" name="email"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label>Password</ion-label>
+      <ion-input type="password" [(ngModel)]="loginCreds.password" name="password"></ion-input>
+    </ion-item>
+
+    <div padding>
+      <button block ion-button (click)="doEmailLogin(loginCreds.value)">Login</button>
+      <button block ion-button (click)="doFacebookLogin()">Login Facebook</button>
+      <button block ion-button (click)="doRegisterUser(loginCreds.value)">Create Account</button>
+    </div>
+
+    <div padding>
+      <p *ngIf="error" class="error">Error:&nbsp;{{ error.code }}</p>
+    </div>
+  </form>
+
+  <div padding *ngIf="userProfile">
+    <h3>Name: {{ (userProfile | async)?.displayName }}</h3>
+    <h3>URL: {{ (userProfile | async)?.avatar }}</h3>
+    <p></p>
+    <button ion-button  (click)="doLogout()">LOGOUT</button>
+  </div>
+
+  <div padding *ngIf="fbProfile || posts ">
+    <pre>{{ fbProfile | json}}</pre>
+    <pre>{{ posts }}</pre>
+     <p></p>
+    <button ion-button  (click)="doLogout()">LOGOUT</button>   
+  </div>
+</ion-content>

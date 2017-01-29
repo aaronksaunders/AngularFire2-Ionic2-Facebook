@@ -1,49 +1,107 @@
-import {Component, OnInit} from "@angular/core";
-import {Platform, NavController} from 'ionic-angular';
-import {Facebook} from 'ionic-native';
-
+import { Component } from '@angular/core';
+import { NavController, Platform } from 'ionic-angular';
+import { Facebook, Device } from 'ionic-native';
 
 import {
-  FIREBASE_PROVIDERS, defaultFirebase,
-  AngularFire, firebaseAuthConfig, AuthProviders,
+  AngularFire, AuthProviders,
   AuthMethods
 } from 'angularfire2';
 
-//declare let firebase: any;
-
+/**
+ * 
+ * @export
+ * @class HomePage
+ */
 @Component({
-  templateUrl: 'build/pages/home/home.html'
+  selector: 'page-home',
+  templateUrl: 'home.html'
 })
 export class HomePage {
 
+  /**
+   * @type {*}
+   * @memberOf HomePage
+   */
   loginCreds: any = {}
+  /**
+   * @type {*}
+   * @memberOf HomePage
+   */
   userProfile: any
-  fbProfile  : any
+  /**
+   * @type {*}
+   * @memberOf HomePage
+   */
+  fbProfile: any
+  /**
+   * @type {*}
+   * @memberOf HomePage
+   */
+  posts: any
 
+  /**
+   * Creates an instance of HomePage.
+   * 
+   * @param {NavController} navController
+   * @param {AngularFire} af
+   * @param {Platform} platform
+   * 
+   * @memberOf HomePage
+   */
   constructor(private navController: NavController, public af: AngularFire, platform: Platform) {
     platform.ready().then(() => {
       this.af = af;
+
+      alert(Device.serial)
     });
   }
 
+  /**
+   * check and see if we have a user at start-up
+   * 
+   * @memberOf HomePage
+   */
   ngOnInit() {
     this.af.auth.subscribe((data) => {
       if (data) {
-        this.userProfile = this.af.database.object('APP/users/' + data.uid);
+        this.userProfile = this.af.database.object('GLOBALFAN/users/' + data.uid);
       } else {
         this.userProfile = null;
       }
     })
   }
 
+  /**
+   * logout of firebase
+   * 
+   * @memberOf HomePage
+   */
   doLogout() {
     this.af.auth.logout();
+    this.userProfile = null;
+    this.userProfile = null;
+    this.fbProfile = null;
   }
 
+  /**
+   * 
+   * @param {any} _creds
+   * 
+   * @memberOf HomePage
+   */
   doRegisterUser(_creds) {
     alert("Not Implemented Yet")
   }
 
+  /**
+   * 
+   * login a user using email
+   * 
+   * @param {any} _creds
+   * @returns
+   * 
+   * @memberOf HomePage
+   */
   doEmailLogin(_creds) {
 
     let providerConfig = {
@@ -51,11 +109,9 @@ export class HomePage {
       method: AuthMethods.Password
     };
 
-    this.af.auth.login(_creds, providerConfig)
+    return this.af.auth.login(_creds, providerConfig)
       .then((success) => {
         console.log("Firebase success: " + JSON.stringify(success));
-        alert(JSON.stringify(success))
-
         return this._setUpUser(_creds, success.auth);
       })
       .catch((error) => {
@@ -65,8 +121,17 @@ export class HomePage {
   }
 
 
+  /**
+   * update the user object in the database
+   * 
+   * @param {any} _credentials
+   * @param {any} _authData
+   * @returns
+   * 
+   * @memberOf HomePage
+   */
   _setUpUser(_credentials, _authData) {
-    var ref = firebase.database().ref('GLOBALFAN/users/' + _authData.uid)
+    var ref = this.af.database.object('GLOBALFAN/users/' + _authData.uid)
     var data = {
       "provider": _authData.providerData[0],
       "avatar": (_credentials.imageUri || "missing"),
@@ -80,6 +145,14 @@ export class HomePage {
     })
   }
 
+  /**
+   * 
+   * get the profile infomation from the Facebook user to add it to the database
+   * 
+   * @returns
+   * 
+   * @memberOf HomePage
+   */
   _FBUserProfile() {
 
     return new Promise((resolve, reject) => {
@@ -94,6 +167,11 @@ export class HomePage {
     });
   }
 
+  /**
+   *  login using facebook credentials.
+   * 
+   * @memberOf HomePage
+   */
   doFacebookLogin() {
     var _authInfo
 
@@ -130,4 +208,5 @@ export class HomePage {
       })
       .catch((_error) => { console.log(_error) })
   }
+
 }

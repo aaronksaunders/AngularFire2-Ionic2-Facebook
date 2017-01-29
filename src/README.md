@@ -1,6 +1,19 @@
 # AngularFire2-Ionic2-Facebook
 Facebook Login w/AngularFire2 and Ionic2
 
+```
+Cordova CLI: 6.4.0
+Ionic Framework Version: 2.0.0
+Ionic CLI Version: 2.2.1
+Ionic App Lib Version: 2.1.7
+Ionic App Scripts Version: 1.0.0
+ios-deploy version: 1.8.6
+ios-sim version: 5.0.6
+OS: macOS Sierra
+Node Version: v5.0.0
+Xcode version: Xcode 8.2.1 Build version 8C1002
+```
+
 See Issue here.... https://github.com/angular/angularfire2/issues/296
 
 -
@@ -16,7 +29,7 @@ I believe running `ionic state restore` should get you going!
 ###Update Facebook Information
 
 In `package.json`
-```
+```Javascript
     {
       "id": "cordova-plugin-facebook4",
       "locator": "cordova-plugin-facebook4",
@@ -36,21 +49,36 @@ And also edit the information in the `config.xml` file
 Be sure you update the app with your credentials from Firebase Console
 
 ```Javascript
-// In app.ts
-@Component({
-  template: '<ion-nav [root]="rootPage"></ion-nav>',
-  providers: [
-    FIREBASE_PROVIDERS,
-    // Initialize Firebase app  - CHANGE THESE
-    defaultFirebase({
+// In app.module.ts
+import { NgModule, ErrorHandler } from '@angular/core';
+import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular';
+import { MyApp } from './app.component';
+import { HomePage } from '../pages/home/home';
+
+import { AngularFireModule } from 'angularfire2';
+
+@NgModule({
+  declarations: [
+    MyApp,
+    HomePage
+  ],
+  imports: [
+    IonicModule.forRoot(MyApp),
+    AngularFireModule.initializeApp({
       apiKey: "YOUR-API-KEY",
       authDomain: "YOUR-AUTH-DOMAIN",
       databaseURL: "https://YOUR-DATABASE-URL.com",
       storageBucket: "YOUR-STORAGE-BUCKET.com",
     }),
-    firebaseAuthConfig({})
-  ]
+  ],
+  bootstrap: [IonicApp],
+  entryComponents: [
+    MyApp,
+    HomePage
+  ],
+  providers: [{ provide: ErrorHandler, useClass: IonicErrorHandler }]
 })
+export class AppModule { }
 ```
 
 ###Basic Email Login
@@ -80,45 +108,6 @@ This is pretty straigt forward
 The magic is properly creating the credentials... for Facebook login.
 
 ```Javascript
-import {Component} from '@angular/core';
-import {Platform, ionicBootstrap} from 'ionic-angular';
-import {StatusBar} from 'ionic-native';
-import {HomePage} from './pages/home/home';
-import {Facebook} from 'ionic-native';
-
-import {
-  FIREBASE_PROVIDERS, defaultFirebase,
-  AngularFire, firebaseAuthConfig, AuthProviders,
-  AuthMethods
-} from 'angularfire2';
-
-
-declare let firebase: any;
-
-@Component({
-  template: '<ion-nav [root]="rootPage"></ion-nav>',
-  providers: [
-    FIREBASE_PROVIDERS,
-    // Initialize Firebase app  
-    defaultFirebase({
-      apiKey: "AIzaSyAj670",
-      authDomain: "",
-      databaseURL: "",
-      storageBucket: "",
-    }),
-    firebaseAuthConfig({})
-  ]
-})
-
-export class MyApp {
-  rootPage: any = HomePage;
-
-  constructor(platform: Platform, public af: AngularFire) {
-    platform.ready().then(() => {
-      // Okay, so the platform is ready and our plugins are available.
-      // Here you can do any higher level native things you might need.
-      StatusBar.styleDefault();
-
 
       Facebook.login(['email'])
         .then((_response) => {
@@ -150,10 +139,7 @@ export class MyApp {
         })
         .catch((_error) => { console.log(_error) })
     });
-  }
-}
 
-ionicBootstrap(MyApp);
 ```
 
 ### Saving User
@@ -165,7 +151,7 @@ information on the user
 ```Javascript
 
   _setUpUser(_credentials, _authData) {
-    var ref = firebase.database().ref('APP/users/' + _authData.uid)
+    var ref = this.af.database.object('APP/users/' + _authData.uid)
     var data = {
       "provider": _authData.providerData[0],
       "avatar": (_credentials.imageUri || "missing"),
